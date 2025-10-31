@@ -60,7 +60,7 @@
       padding: 6rem 5vw 4rem;
     }
 
-    /* Grid: esquerda = site; direita = marca DETIC grande (só em telas largas) */
+    /* Grid: esquerda = site; direita = marca DETIC (agora ancorada no canto inferior direito) */
     .grid{
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -140,25 +140,28 @@
     .disclaimer{ margin-top: 40px; font-size: 12px; opacity: .6; max-width: 80ch; }
     a, button{ border-radius:0 }
 
-    /* ===== Marca gigante à direita ===== */
+    /* ===== Marca gigante — canto inferior direito ===== */
     .brand-col{
       position: relative;
-      display:flex; align-items:center; justify-content:center;
-      /* altura aproximada disponível: subtrai padding do wrapper */
+      display:flex;
+      /* mantém altura disponível; overflow hidden para não vazar ao escalar */
       min-height: 60vh;
       height: calc(100vh - 10rem);
       overflow: hidden;
     }
     .brand-wrap{
       position: relative;
-      display:flex; align-items:center; justify-content:center;
-      width:100%; height:100%;
+      display:flex; width:100%; height:100%;
+      /* chave: ancorar conteúdo no canto inferior direito */
+      align-items: flex-end;        /* vertical: bottom */
+      justify-content: flex-end;    /* horizontal: right */
+      padding: clamp(8px, 2vw, 28px); /* “respiro” das bordas */
     }
     .brand{
       display:flex; gap: clamp(8px, 1.5vw, 18px);
       line-height: .8;
       user-select:none;
-      transform-origin: center center; /* importante para o scale centralizado */
+      transform-origin: 100% 100%; /* bottom-right */
       will-change: transform;
     }
     .brand-letter{
@@ -209,12 +212,13 @@
           </a>
 
           <p class="disclaimer">
-            we are the robots.
+            se você espera conforto,
+            procure em outro sistema. aqui, a falha é política.
           </p>
         </div>
       </section>
 
-      <!-- Coluna direita: marca DETIC gigante (ocupa ~90% do espaço livre) -->
+      <!-- Coluna direita: marca DETIC (canto inferior direito, ~90% da área livre) -->
       <aside class="brand-col" aria-hidden="true">
         <div class="brand-wrap" id="brandWrap">
           <div class="brand" id="brand">
@@ -242,7 +246,7 @@
       }, TRANSICAO_MS);
     })();
 
-    // Ajusta escala da marca para ocupar ~90% do espaço livre (largura e altura)
+    // Ajusta escala da marca para ocupar ~90% do espaço livre (largura e altura), ancorada no canto inferior direito
     function resizeBrand(){
       const wrap = document.getElementById('brandWrap');
       const brand = document.getElementById('brand');
@@ -262,6 +266,7 @@
       // 90% de ocupação em ambos os eixos
       const scale = Math.min((w * 0.90) / bw, (h * 0.90) / bh);
 
+      // Como o transform-origin é bottom-right (100% 100%), o scale manterá a âncora no canto inferior direito.
       brand.style.transform = `scale(${scale})`;
     }
 
