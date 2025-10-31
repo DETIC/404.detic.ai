@@ -9,9 +9,8 @@
     :root{
       --preto-abissal:#0A0A0A;
       --texto-primario:#E0E0E0;
-      --vermelho-panico:#C62828;
+      --vermelho-panico:#C62828; /* cor pedida para DETIC */
       --verde-sintetico:#00FF00;
-      --azul-maquina:#3D5AFE;
       --ciano-espasmodico:#00FFFF;
       --magenta-estilhacado:#FF00FF;
     }
@@ -57,10 +56,26 @@
 
     /* ===== Camada 2 (site) ===== */
     .wrap{
-      max-width: 1100px;
+      max-width: 1400px;
       padding: 6rem 5vw 4rem;
     }
-    .row{transform: translateX(-1.5%) rotate(-0.1deg);}
+
+    /* Grid: esquerda = site; direita = marca DETIC grande (só em telas largas) */
+    .grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: clamp(24px, 5vw, 64px);
+    }
+    @media (max-width: 900px){
+      .grid{ display:block; }
+      .brand-col{ display:none; } /* some em telas pequenas */
+    }
+
+    .left-col{ /* mantém conteúdo encostado à esquerda */
+      transform: translateX(-1.5%) rotate(-0.1deg);
+    }
+
     .row:nth-child(2){transform: translateX(3%) rotate(0.2deg);}
     .row:nth-child(3){transform: translateX(-3%) rotate(-0.15deg);}
 
@@ -69,7 +84,7 @@
       border:1px solid var(--texto-primario); padding:4px 8px; opacity:.7; margin-bottom:16px;
     }
 
-    /* 404 com glitch */
+    /* 404 com glitch (conteúdo original) */
     .e404{
       position:relative;
       font-size: clamp(64px, 14vw, 220px);
@@ -102,6 +117,7 @@
       font-size: clamp(14px, 1.4vw, 18px); opacity:.85; text-transform: uppercase; letter-spacing:1px; margin-bottom: 28px;
     }
     .body{ max-width: 68ch; font-size: 15px; line-height: 1.4; margin-top: 18px; }
+
     .cmd{
       display:inline-flex; align-items:center; gap:12px;
       margin-top:28px; padding:10px 14px;
@@ -111,54 +127,137 @@
       font-weight:700; letter-spacing:.5px;
       box-shadow: 0 0 12px rgba(0,255,0,0.15);
       transform: translateX(-2%);
+      transition: opacity .4s ease, visibility .4s ease;
     }
-    .cmd:hover{ box-shadow: 0 0 22px rgba(0,255,0,0.25); }
     .cmd .caret{ width:10px; height:14px; background: var(--verde-sintetico); display:inline-block; }
+    .cmd.disabled{
+      opacity:0; visibility:hidden; pointer-events:none;
+    }
+    .cmd.enabled{
+      opacity:1; visibility:visible; pointer-events:auto;
+    }
+
     .disclaimer{ margin-top: 40px; font-size: 12px; opacity: .6; max-width: 80ch; }
     a, button{ border-radius:0 }
+
+    /* ===== Marca grande à direita ===== */
+    .brand-col{
+      display:flex; align-items:center; justify-content:center;
+      min-height: 60vh;
+    }
+    .brand{
+      display:flex; gap: clamp(8px, 1.5vw, 18px);
+      line-height: .8;
+      user-select:none;
+    }
+    .brand-letter{
+      color: var(--vermelho-panico);
+      font-weight: 900;
+      font-size: clamp(64px, 14vw, 220px); /* enorme, ocupa a área livre */
+      letter-spacing: -6px;
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+      filter: drop-shadow(0 0 12px rgba(198,40,40,0.15));
+      transition: opacity .4s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+    }
+    .brand-letter.on{
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   </style>
 </head>
 <body>
 
-  <!-- Camada 1: overlay inicial (apenas a frase piscando) -->
+  <!-- Camada 1: overlay inicial (frase piscando) -->
   <section id="layer1" class="layer1">
     <p class="glitch-line" id="frase">&gt; você nunca esteve online. só em rede.</p>
   </section>
 
-  <!-- Camada 2: conteúdo do site -->
+  <!-- Camada 2: conteúdo -->
   <main id="layer2" class="wrap hidden">
-    <div class="row"><span class="badge">interface de falha deliberada</span></div>
+    <div class="grid">
+      <!-- Coluna esquerda: conteúdo existente -->
+      <section class="left-col">
+        <div class="row"><span class="badge">interface de falha deliberada</span></div>
 
-    <div class="row">
-      <div class="e404" aria-hidden="true" data-text="404">404</div>
-    </div>
+        <div class="row">
+          <div class="e404" aria-hidden="true" data-text="404">404</div>
+        </div>
 
-    <div class="row">
-      <h1>Sistema em colapso</h1>
-      <div class="sub">navegação interrompida</div>
-      <div class="body">
-        este é o corpo da falha. a detic não opera em redes convencionais. a interface é uma disfunção deliberada.
-        você está no lugar certo, ou talvez não.
-      </div>
+        <div class="row">
+          <h1>Sistema em colapso</h1>
+          <div class="sub">navegação interrompida</div>
+          <div class="body">
+            este é o corpo da falha. a detic não opera em redes convencionais. a interface é uma disfunção deliberada.
+            você está no lugar certo, ou talvez não.
+          </div>
 
-      <a class="cmd" href="/" id="executar">
-        <span class="caret" aria-hidden="true"></span>/executar_protocolo.sh
-      </a>
+          <a class="cmd disabled" href="/" id="executar">
+            <span class="caret" aria-hidden="true"></span>/executar_protocolo.sh
+          </a>
 
-      <p class="disclaimer">
-        we are the robots
-      </p>
+          <p class="disclaimer">
+            se você espera conforto,
+            procure em outro sistema. aqui, a falha é política.
+          </p>
+        </div>
+      </section>
+
+      <!-- Coluna direita: marca DETIC gigante -->
+      <aside class="brand-col" aria-hidden="true">
+        <div class="brand" id="brand">
+          <span class="brand-letter" data-i="0">D</span>
+          <span class="brand-letter" data-i="1">E</span>
+          <span class="brand-letter" data-i="2">T</span>
+          <span class="brand-letter" data-i="3">I</span>
+          <span class="brand-letter" data-i="4">C</span>
+        </div>
+      </aside>
     </div>
   </main>
 
   <script>
-    // Splash (camada 1) -> Site (camada 2) após 3s
+    // Splash (camada 1) -> Site (camada 2) após ~3s
     (function(){
       const $l1 = document.getElementById('layer1');
       const $l2 = document.getElementById('layer2');
       const TRANSICAO_MS = 3000; // duração do splash
-      setTimeout(()=>{ $l1.classList.add('hidden'); $l2.classList.remove('hidden'); }, TRANSICAO_MS);
+      setTimeout(()=>{
+        $l1.classList.add('hidden');
+        $l2.classList.remove('hidden');
+        startBrandSequence(); // dispara a sequência ao entrar na 2ª camada
+      }, TRANSICAO_MS);
     })();
+
+    // Sequência: aguarda 2s, mostra D,E,T,I,C a cada 1s, então revela o botão
+    function startBrandSequence(){
+      const letters = document.querySelectorAll('.brand-letter');
+      const btn = document.getElementById('executar');
+      const WAIT_BEFORE = 2000; // 2s antes de iniciar a revelação
+      const STEP = 1000;        // 1s por letra
+
+      // garante estado inicial do botão
+      if(btn){
+        btn.classList.remove('enabled');
+        btn.classList.add('disabled');
+        btn.setAttribute('aria-disabled','true');
+      }
+
+      // revela letras em sequência
+      letters.forEach((el, idx) => {
+        setTimeout(()=>{ el.classList.add('on'); }, WAIT_BEFORE + idx*STEP);
+      });
+
+      // quando terminar (após C), habilita/aparece o botão
+      const total = WAIT_BEFORE + letters.length * STEP;
+      setTimeout(()=>{
+        if(btn){
+          btn.classList.remove('disabled');
+          btn.classList.add('enabled');
+          btn.removeAttribute('aria-disabled');
+        }
+      }, total);
+    }
 
     // Comportamento original do "executar_protocolo.sh"
     (function(){
