@@ -30,7 +30,10 @@
       background-position: 0 0, 1px 1px;
     }
 
-    /* ===== Camada 1 (overlay inicial) ===== */
+    /* Utilidades */
+    .hidden{ display:none !important; }
+
+    /* ===== Camada 1 (splash) ===== */
     .layer1{
       position: fixed; inset: 0;
       display: flex; flex-direction: column; gap: 18px;
@@ -43,26 +46,16 @@
     .layer1 .glitch-line{
       font-size: clamp(16px,2.2vw,22px);
       opacity: .95;
-      text-transform: none;
       letter-spacing: .5px;
+      animation: blink 1.2s steps(2, start) infinite;
     }
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:12px 18px;
-      border:1px solid var(--verde-sintetico);
-      background: rgba(0,0,0,.35);
-      color: var(--verde-sintetico);
-      text-decoration:none; font-weight:700; letter-spacing:.5px;
-      box-shadow: 0 0 12px rgba(0,255,0,0.15);
-      cursor:pointer;
+    @keyframes blink{
+      0%,40%{ opacity:.95 }
+      50%   { opacity:.20 }
+      90%,100%{ opacity:.95 }
     }
-    .btn:hover{ box-shadow: 0 0 22px rgba(0,255,0,0.25); }
-    .layer1 .sec-line{
-      font-size: 12px; opacity:.6; max-width: 80ch;
-    }
-    .hidden{ display:none !important; }
 
-    /* ===== Conteúdo existente (camada 2) ===== */
+    /* ===== Camada 2 (site) ===== */
     .wrap{
       max-width: 1100px;
       padding: 6rem 5vw 4rem;
@@ -127,15 +120,12 @@
 </head>
 <body>
 
-  <!-- Camada 1: overlay inicial -->
+  <!-- Camada 1: overlay inicial (apenas a frase piscando) -->
   <section id="layer1" class="layer1">
     <p class="glitch-line" id="frase">&gt; você nunca esteve online. só em rede.</p>
-    <button id="acessar" class="btn">acessar o sistema</button>
-    <p class="sec-line" id="status-check" aria-live="polite">&gt; TESTANDO SEGURANÇA...</p>
-    <p class="sec-line hidden" id="ip-display"></p>
   </section>
 
-  <!-- Camada 2: conteúdo existente -->
+  <!-- Camada 2: conteúdo do site -->
   <main id="layer2" class="wrap hidden">
     <div class="row"><span class="badge">interface de falha deliberada</span></div>
 
@@ -163,55 +153,26 @@
   </main>
 
   <script>
-    // Camada 1 -> Camada 2
+    // Splash (camada 1) -> Site (camada 2) após 3s
     (function(){
-      const $acessar = document.getElementById('acessar');
       const $l1 = document.getElementById('layer1');
       const $l2 = document.getElementById('layer2');
-      const $status = document.getElementById('status-check');
-      const $ip = document.getElementById('ip-display');
-
-      // Simulação breve de "teste de segurança"
-      setTimeout(()=>{ $status.textContent = '> SISTEMA PRONTO.'; }, 500);
-
-      $acessar.addEventListener('click', function(){
-        // Opcional: lembrar por sessão que a camada 1 foi liberada
-        try { sessionStorage.setItem('detic_layer1', 'ok'); } catch(e){}
-
-        $l1.classList.add('hidden');
-        $l2.classList.remove('hidden');
-      });
-
-      // Se já liberou nesta sessão, pule camada 1
-      try {
-        if (sessionStorage.getItem('detic_layer1') === 'ok') {
-          $l1.classList.add('hidden'); $l2.classList.remove('hidden');
-        }
-      } catch(e){}
-
-      // Opcional: tentativa leve de exibir IP via endpoint público da Cloudflare (sem dependência externa sua)
-      // Desativado por padrão para evitar latência; ative se quiser.
-      /*
-      fetch('https://www.cloudflare.com/cdn-cgi/trace').then(r=>r.text()).then(t=>{
-        const ip = (t.match(/ip=([^\n]+)/)||[])[1];
-        if(ip){ $ip.textContent = '> IP ' + ip; $ip.classList.remove('hidden'); }
-      }).catch(()=>{});
-      */
+      const TRANSICAO_MS = 3000; // duração do splash
+      setTimeout(()=>{ $l1.classList.add('hidden'); $l2.classList.remove('hidden'); }, TRANSICAO_MS);
     })();
 
     // Comportamento original do "executar_protocolo.sh"
-    document.getElementById('executar').addEventListener('click', function(e){
-      setTimeout(function(){
-        if (document.visibilityState === 'visible') {
-          alert('protocolo executado localmente. defina a rota "/" quando a home existir.');
-        }
-      }, 600);
-    });
+    (function(){
+      const $exec = document.getElementById('executar');
+      if(!$exec) return;
+      $exec.addEventListener('click', function(){
+        setTimeout(function(){
+          if (document.visibilityState === 'visible') {
+            alert('protocolo executado localmente. defina a rota "/" quando a home existir.');
+          }
+        }, 600);
+      });
+    })();
   </script>
-
-  <!-- Beacon Cloudflare (opc.) — preferível habilitar via painel; mantenho comentado -->
-  <!--
-  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"SEU_TOKEN"}'></script>
-  -->
 </body>
 </html>
