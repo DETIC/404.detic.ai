@@ -8,12 +8,12 @@
   <style>
     :root{
       --preto-abissal:#0A0A0A;
-      --texto-primario:#E0E0E0;    /* cinza frio técnico */
-      --vermelho-panico:#C62828;   /* 404 e alertas */
-      --verde-sintetico:#00FF00;   /* comando */
-      --azul-maquina:#3D5AFE;      /* alternativa de comando */
-      --ciano-espasmodico:#00FFFF; /* glitch */
-      --magenta-estilhacado:#FF00FF; /* glitch */
+      --texto-primario:#E0E0E0;
+      --vermelho-panico:#C62828;
+      --verde-sintetico:#00FF00;
+      --azul-maquina:#3D5AFE;
+      --ciano-espasmodico:#00FFFF;
+      --magenta-estilhacado:#FF00FF;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -23,51 +23,72 @@
       color:var(--texto-primario);
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
       letter-spacing:0.2px;
-      /* ruído leve no fundo */
       background-image:
         radial-gradient(transparent 0 1px),
         radial-gradient(transparent 0 1px);
       background-size: 3px 3px, 5px 5px;
       background-position: 0 0, 1px 1px;
     }
+
+    /* ===== Camada 1 (overlay inicial) ===== */
+    .layer1{
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column; gap: 18px;
+      align-items: center; justify-content: center;
+      background: var(--preto-abissal);
+      z-index: 1000;
+      padding: 5vw;
+      text-align: center;
+    }
+    .layer1 .glitch-line{
+      font-size: clamp(16px,2.2vw,22px);
+      opacity: .95;
+      text-transform: none;
+      letter-spacing: .5px;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 18px;
+      border:1px solid var(--verde-sintetico);
+      background: rgba(0,0,0,.35);
+      color: var(--verde-sintetico);
+      text-decoration:none; font-weight:700; letter-spacing:.5px;
+      box-shadow: 0 0 12px rgba(0,255,0,0.15);
+      cursor:pointer;
+    }
+    .btn:hover{ box-shadow: 0 0 22px rgba(0,255,0,0.25); }
+    .layer1 .sec-line{
+      font-size: 12px; opacity:.6; max-width: 80ch;
+    }
+    .hidden{ display:none !important; }
+
+    /* ===== Conteúdo existente (camada 2) ===== */
     .wrap{
       max-width: 1100px;
       padding: 6rem 5vw 4rem;
     }
-    /* desalinhamentos controlados */
     .row{transform: translateX(-1.5%) rotate(-0.1deg);}
     .row:nth-child(2){transform: translateX(3%) rotate(0.2deg);}
     .row:nth-child(3){transform: translateX(-3%) rotate(-0.15deg);}
 
     .badge{
-      display:inline-block;
-      font-size:12px;
-      letter-spacing:2px;
-      text-transform:uppercase;
-      border:1px solid var(--texto-primario);
-      padding:4px 8px;
-      opacity:.7;
-      margin-bottom:16px;
+      display:inline-block; font-size:12px; letter-spacing:2px; text-transform:uppercase;
+      border:1px solid var(--texto-primario); padding:4px 8px; opacity:.7; margin-bottom:16px;
     }
 
     /* 404 com glitch */
     .e404{
       position:relative;
       font-size: clamp(64px, 14vw, 220px);
-      font-weight: 900;
-      line-height:.8;
+      font-weight: 900; line-height:.8;
       color: var(--vermelho-panico);
-      text-shadow:
-        0 0 1px rgba(198,40,40,0.6),
-        0 0 18px rgba(198,40,40,0.25);
+      text-shadow: 0 0 1px rgba(198,40,40,0.6), 0 0 18px rgba(198,40,40,0.25);
       letter-spacing: -6px;
     }
-    .e404::before,
-    .e404::after{
+    .e404::before, .e404::after{
       content: attr(data-text);
       position:absolute; left:0; top:0;
-      mix-blend-mode: difference;
-      opacity:.65; pointer-events:none;
+      mix-blend-mode: difference; opacity:.65; pointer-events:none;
     }
     .e404::before{ color: var(--ciano-espasmodico); transform: translate(2px, -1px); }
     .e404::after { color: var(--magenta-estilhacado); transform: translate(-2px, 1px); }
@@ -82,50 +103,40 @@
 
     h1{
       font-size: clamp(22px, 2.8vw, 40px);
-      text-transform: uppercase;
-      margin: 18px 0 6px 0;
-      letter-spacing: 1.5px;
+      text-transform: uppercase; margin: 18px 0 6px 0; letter-spacing: 1.5px;
     }
     .sub{
-      font-size: clamp(14px, 1.4vw, 18px);
-      opacity:.85;
-      text-transform: uppercase;
-      letter-spacing:1px;
-      margin-bottom: 28px;
+      font-size: clamp(14px, 1.4vw, 18px); opacity:.85; text-transform: uppercase; letter-spacing:1px; margin-bottom: 28px;
     }
-    .body{
-      max-width: 68ch;
-      font-size: 15px;
-      line-height: 1.4;
-      margin-top: 18px;
-    }
+    .body{ max-width: 68ch; font-size: 15px; line-height: 1.4; margin-top: 18px; }
     .cmd{
       display:inline-flex; align-items:center; gap:12px;
-      margin-top:28px;
-      padding:10px 14px;
+      margin-top:28px; padding:10px 14px;
       border:1px solid var(--verde-sintetico);
       background: rgba(0,0,0,.35);
-      text-decoration:none;
-      color: var(--verde-sintetico);
-      font-weight:700;
-      letter-spacing:.5px;
+      text-decoration:none; color: var(--verde-sintetico);
+      font-weight:700; letter-spacing:.5px;
       box-shadow: 0 0 12px rgba(0,255,0,0.15);
       transform: translateX(-2%);
     }
     .cmd:hover{ box-shadow: 0 0 22px rgba(0,255,0,0.25); }
     .cmd .caret{ width:10px; height:14px; background: var(--verde-sintetico); display:inline-block; }
-    .disclaimer{
-      margin-top: 40px;
-      font-size: 12px;
-      opacity: .6;
-      max-width: 80ch;
-    }
-    /* sem botões fofos, sem cantos arredondados, sem centralização complacente */
+    .disclaimer{ margin-top: 40px; font-size: 12px; opacity: .6; max-width: 80ch; }
     a, button{ border-radius:0 }
   </style>
 </head>
 <body>
-  <main class="wrap">
+
+  <!-- Camada 1: overlay inicial -->
+  <section id="layer1" class="layer1">
+    <p class="glitch-line" id="frase">&gt; você nunca esteve online. só em rede.</p>
+    <button id="acessar" class="btn">acessar o sistema</button>
+    <p class="sec-line" id="status-check" aria-live="polite">&gt; TESTANDO SEGURANÇA...</p>
+    <p class="sec-line hidden" id="ip-display"></p>
+  </section>
+
+  <!-- Camada 2: conteúdo existente -->
+  <main id="layer2" class="wrap hidden">
     <div class="row"><span class="badge">interface de falha deliberada</span></div>
 
     <div class="row">
@@ -152,15 +163,55 @@
   </main>
 
   <script>
-    // Se houver "home", este link navega. Caso não haja, fornece feedback agressivo.
+    // Camada 1 -> Camada 2
+    (function(){
+      const $acessar = document.getElementById('acessar');
+      const $l1 = document.getElementById('layer1');
+      const $l2 = document.getElementById('layer2');
+      const $status = document.getElementById('status-check');
+      const $ip = document.getElementById('ip-display');
+
+      // Simulação breve de "teste de segurança"
+      setTimeout(()=>{ $status.textContent = '> SISTEMA PRONTO.'; }, 500);
+
+      $acessar.addEventListener('click', function(){
+        // Opcional: lembrar por sessão que a camada 1 foi liberada
+        try { sessionStorage.setItem('detic_layer1', 'ok'); } catch(e){}
+
+        $l1.classList.add('hidden');
+        $l2.classList.remove('hidden');
+      });
+
+      // Se já liberou nesta sessão, pule camada 1
+      try {
+        if (sessionStorage.getItem('detic_layer1') === 'ok') {
+          $l1.classList.add('hidden'); $l2.classList.remove('hidden');
+        }
+      } catch(e){}
+
+      // Opcional: tentativa leve de exibir IP via endpoint público da Cloudflare (sem dependência externa sua)
+      // Desativado por padrão para evitar latência; ative se quiser.
+      /*
+      fetch('https://www.cloudflare.com/cdn-cgi/trace').then(r=>r.text()).then(t=>{
+        const ip = (t.match(/ip=([^\n]+)/)||[])[1];
+        if(ip){ $ip.textContent = '> IP ' + ip; $ip.classList.remove('hidden'); }
+      }).catch(()=>{});
+      */
+    })();
+
+    // Comportamento original do "executar_protocolo.sh"
     document.getElementById('executar').addEventListener('click', function(e){
-      // Tenta navegar; se a resposta não carregar (ambiente local), mostra mensagem.
       setTimeout(function(){
         if (document.visibilityState === 'visible') {
-          alert('protocolo executado localmente. defina a rota "/" quando a home existir.'); 
+          alert('protocolo executado localmente. defina a rota "/" quando a home existir.');
         }
       }, 600);
     });
   </script>
+
+  <!-- Beacon Cloudflare (opc.) — preferível habilitar via painel; mantenho comentado -->
+  <!--
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"SEU_TOKEN"}'></script>
+  -->
 </body>
 </html>
