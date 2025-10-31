@@ -140,20 +140,32 @@
     .disclaimer{ margin-top: 40px; font-size: 12px; opacity: .6; max-width: 80ch; }
     a, button{ border-radius:0 }
 
-    /* ===== Marca grande à direita ===== */
+    /* ===== Marca gigante à direita ===== */
     .brand-col{
+      position: relative;
       display:flex; align-items:center; justify-content:center;
+      /* altura aproximada disponível: subtrai padding do wrapper */
       min-height: 60vh;
+      height: calc(100vh - 10rem);
+      overflow: hidden;
+    }
+    .brand-wrap{
+      position: relative;
+      display:flex; align-items:center; justify-content:center;
+      width:100%; height:100%;
     }
     .brand{
       display:flex; gap: clamp(8px, 1.5vw, 18px);
       line-height: .8;
       user-select:none;
+      transform-origin: center center; /* importante para o scale centralizado */
+      will-change: transform;
     }
     .brand-letter{
       color: var(--vermelho-panico);
       font-weight: 900;
-      font-size: clamp(64px, 14vw, 220px); /* enorme, ocupa a área livre */
+      /* tamanho base generoso; o JS escalará até 90% do container */
+      font-size: 160px;
       letter-spacing: -6px;
       opacity: 0;
       transform: translateY(12px) scale(0.98);
@@ -203,14 +215,16 @@
         </div>
       </section>
 
-      <!-- Coluna direita: marca DETIC gigante -->
+      <!-- Coluna direita: marca DETIC gigante (ocupa ~90% do espaço livre) -->
       <aside class="brand-col" aria-hidden="true">
-        <div class="brand" id="brand">
-          <span class="brand-letter" data-i="0">D</span>
-          <span class="brand-letter" data-i="1">E</span>
-          <span class="brand-letter" data-i="2">T</span>
-          <span class="brand-letter" data-i="3">I</span>
-          <span class="brand-letter" data-i="4">C</span>
+        <div class="brand-wrap" id="brandWrap">
+          <div class="brand" id="brand">
+            <span class="brand-letter" data-i="0">D</span>
+            <span class="brand-letter" data-i="1">E</span>
+            <span class="brand-letter" data-i="2">T</span>
+            <span class="brand-letter" data-i="3">I</span>
+            <span class="brand-letter" data-i="4">C</span>
+          </div>
         </div>
       </aside>
     </div>
@@ -229,6 +243,29 @@
       }, TRANSICAO_MS);
     })();
 
+    // Ajusta escala da marca para ocupar ~90% do espaço livre (largura e altura)
+    function resizeBrand(){
+      const wrap = document.getElementById('brandWrap');
+      const brand = document.getElementById('brand');
+      if(!wrap || !brand) return;
+
+      // Reset para medir tamanho "natural"
+      brand.style.transform = 'scale(1)';
+
+      const w = wrap.clientWidth;
+      const h = wrap.clientHeight;
+      const bb = brand.getBoundingClientRect();
+      const bw = bb.width;
+      const bh = bb.height;
+
+      if (bw === 0 || bh === 0 || w === 0 || h === 0) return;
+
+      // 90% de ocupação em ambos os eixos
+      const scale = Math.min((w * 0.90) / bw, (h * 0.90) / bh);
+
+      brand.style.transform = `scale(${scale})`;
+    }
+
     // Sequência: aguarda 2s, mostra D,E,T,I,C a cada 1s, então revela o botão
     function startBrandSequence(){
       const letters = document.querySelectorAll('.brand-letter');
@@ -236,41 +273,8 @@
       const WAIT_BEFORE = 2000; // 2s antes de iniciar a revelação
       const STEP = 1000;        // 1s por letra
 
-      // garante estado inicial do botão
+      // estado inicial do botão
       if(btn){
         btn.classList.remove('enabled');
         btn.classList.add('disabled');
-        btn.setAttribute('aria-disabled','true');
-      }
-
-      // revela letras em sequência
-      letters.forEach((el, idx) => {
-        setTimeout(()=>{ el.classList.add('on'); }, WAIT_BEFORE + idx*STEP);
-      });
-
-      // quando terminar (após C), habilita/aparece o botão
-      const total = WAIT_BEFORE + letters.length * STEP;
-      setTimeout(()=>{
-        if(btn){
-          btn.classList.remove('disabled');
-          btn.classList.add('enabled');
-          btn.removeAttribute('aria-disabled');
-        }
-      }, total);
-    }
-
-    // Comportamento original do "executar_protocolo.sh"
-    (function(){
-      const $exec = document.getElementById('executar');
-      if(!$exec) return;
-      $exec.addEventListener('click', function(){
-        setTimeout(function(){
-          if (document.visibilityState === 'visible') {
-            alert('protocolo executado localmente. defina a rota "/" quando a home existir.');
-          }
-        }, 600);
-      });
-    })();
-  </script>
-</body>
-</html>
+        btn.setAttribute('aria-disabled',
