@@ -60,22 +60,10 @@
       padding: 6rem 5vw 4rem;
     }
 
-    /* Grid: esquerda = site; direita = marca DETIC (agora ancorada no canto inferior direito) */
-    .grid{
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: start;
-      gap: clamp(24px, 5vw, 64px);
-    }
-    @media (max-width: 900px){
-      .grid{ display:block; }
-      .brand-col{ display:none; } /* some em telas pequenas */
-    }
-
-    .left-col{ /* mantém conteúdo encostado à esquerda */
+    /* Conteúdo principal continua alinhado à esquerda */
+    .left-col{
       transform: translateX(-1.5%) rotate(-0.1deg);
     }
-
     .row:nth-child(2){transform: translateX(3%) rotate(0.2deg);}
     .row:nth-child(3){transform: translateX(-3%) rotate(-0.15deg);}
 
@@ -140,34 +128,30 @@
     .disclaimer{ margin-top: 40px; font-size: 12px; opacity: .6; max-width: 80ch; }
     a, button{ border-radius:0 }
 
-    /* ===== Marca gigante — canto inferior direito ===== */
-    .brand-col{
-      position: relative;
-      display:flex;
-      /* mantém altura disponível; overflow hidden para não vazar ao escalar */
-      min-height: 60vh;
-      height: calc(100vh - 10rem);
-      overflow: hidden;
+    /* ===== Marca DETIC abaixo, alinhada à esquerda ===== */
+    .brand-block{
+      margin-top: clamp(24px, 6vh, 64px);
+      /* altura visual para caber a marca grande */
+      min-height: 40vh;
     }
     .brand-wrap{
       position: relative;
-      display:flex; width:100%; height:100%;
-      /* chave: ancorar conteúdo no canto inferior direito */
-      align-items: flex-end;        /* vertical: bottom */
-      justify-content: flex-end;    /* horizontal: right */
-      padding: clamp(8px, 2vw, 28px); /* “respiro” das bordas */
+      display:flex; align-items:flex-end; justify-content:flex-start; /* canto inferior esquerdo do bloco */
+      width:100%; height:100%;
+      overflow:hidden;
+      padding-right: 2vw; /* respiro à direita, evita corte em escala alta */
     }
     .brand{
       display:flex; gap: clamp(8px, 1.5vw, 18px);
       line-height: .8;
       user-select:none;
-      transform-origin: 100% 100%; /* bottom-right */
+      transform-origin: 0% 100%; /* bottom-left para manter ancoragem à esquerda */
       will-change: transform;
     }
     .brand-letter{
       color: var(--vermelho-panico);
       font-weight: 900;
-      /* tamanho base generoso; o JS escalará até 90% do container */
+      /* tamanho base; o JS ajusta escala para ~90% da largura/altura disponíveis */
       font-size: 160px;
       letter-spacing: -6px;
       opacity: 0;
@@ -190,47 +174,45 @@
 
   <!-- Camada 2: conteúdo -->
   <main id="layer2" class="wrap hidden">
-    <div class="grid">
-      <!-- Coluna esquerda: conteúdo existente -->
-      <section class="left-col">
-        <div class="row"><span class="badge">interface de falha deliberada</span></div>
+    <!-- Bloco existente, alinhado à esquerda -->
+    <section class="left-col">
+      <div class="row"><span class="badge">interface de falha deliberada</span></div>
 
-        <div class="row">
-          <div class="e404" aria-hidden="true" data-text="404">404</div>
+      <div class="row">
+        <div class="e404" aria-hidden="true" data-text="404">404</div>
+      </div>
+
+      <div class="row">
+        <h1>Sistema em colapso</h1>
+        <div class="sub">navegação interrompida</div>
+        <div class="body">
+          este é o corpo da falha. a detic não opera em redes convencionais. a interface é uma disfunção deliberada.
+          você está no lugar certo, ou talvez não.
         </div>
 
-        <div class="row">
-          <h1>Sistema em colapso</h1>
-          <div class="sub">navegação interrompida</div>
-          <div class="body">
-            este é o corpo da falha. a detic não opera em redes convencionais. a interface é uma disfunção deliberada.
-            você está no lugar certo, ou talvez não.
-          </div>
+        <a class="cmd disabled" href="/" id="executar">
+          <span class="caret" aria-hidden="true"></span>/executar_protocolo.sh
+        </a>
 
-          <a class="cmd disabled" href="/" id="executar">
-            <span class="caret" aria-hidden="true"></span>/executar_protocolo.sh
-          </a>
+        <p class="disclaimer">
+          se você espera conforto,
+          procure em outro sistema. aqui, a falha é política.
+        </p>
+      </div>
+    </section>
 
-          <p class="disclaimer">
-            se você espera conforto,
-            procure em outro sistema. aqui, a falha é política.
-          </p>
+    <!-- Marca DETIC abaixo, alinhada à esquerda -->
+    <section class="brand-block" aria-hidden="true">
+      <div class="brand-wrap" id="brandWrap">
+        <div class="brand" id="brand">
+          <span class="brand-letter" data-i="0">D</span>
+          <span class="brand-letter" data-i="1">E</span>
+          <span class="brand-letter" data-i="2">T</span>
+          <span class="brand-letter" data-i="3">I</span>
+          <span class="brand-letter" data-i="4">C</span>
         </div>
-      </section>
-
-      <!-- Coluna direita: marca DETIC (canto inferior direito, ~90% da área livre) -->
-      <aside class="brand-col" aria-hidden="true">
-        <div class="brand-wrap" id="brandWrap">
-          <div class="brand" id="brand">
-            <span class="brand-letter" data-i="0">D</span>
-            <span class="brand-letter" data-i="1">E</span>
-            <span class="brand-letter" data-i="2">T</span>
-            <span class="brand-letter" data-i="3">I</span>
-            <span class="brand-letter" data-i="4">C</span>
-          </div>
-        </div>
-      </aside>
-    </div>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -246,7 +228,7 @@
       }, TRANSICAO_MS);
     })();
 
-    // Ajusta escala da marca para ocupar ~90% do espaço livre (largura e altura), ancorada no canto inferior direito
+    // Ajusta escala da marca para ocupar ~90% da área do bloco (largura/altura), ancorada no canto inferior esquerdo
     function resizeBrand(){
       const wrap = document.getElementById('brandWrap');
       const brand = document.getElementById('brand');
@@ -265,8 +247,6 @@
 
       // 90% de ocupação em ambos os eixos
       const scale = Math.min((w * 0.90) / bw, (h * 0.90) / bh);
-
-      // Como o transform-origin é bottom-right (100% 100%), o scale manterá a âncora no canto inferior direito.
       brand.style.transform = `scale(${scale})`;
     }
 
@@ -308,7 +288,7 @@
 
       // Recalcular em resize/rotação
       window.addEventListener('resize', resizeBrand);
-      // Pequeno debounce para fontes que ajustam depois do paint
+      // Pequeninos ajustes após o paint
       setTimeout(resizeBrand, 100);
       setTimeout(resizeBrand, 300);
     }
