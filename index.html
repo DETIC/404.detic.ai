@@ -277,4 +277,50 @@
       if(btn){
         btn.classList.remove('enabled');
         btn.classList.add('disabled');
-        btn.setAttribute('aria-disabled',
+        btn.setAttribute('aria-disabled','true');
+      }
+
+      // Primeiro ajuste de escala (com letras ainda "apagadas")
+      resizeBrand();
+
+      // revela letras em sequência; recalcula escala a cada letra
+      letters.forEach((el, idx) => {
+        setTimeout(()=>{
+          el.classList.add('on');
+          resizeBrand();
+        }, WAIT_BEFORE + idx*STEP);
+      });
+
+      // quando terminar (após C), habilita/aparece o botão
+      const total = WAIT_BEFORE + letters.length * STEP;
+      setTimeout(()=>{
+        if(btn){
+          btn.classList.remove('disabled');
+          btn.classList.add('enabled');
+          btn.removeAttribute('aria-disabled');
+        }
+        resizeBrand(); // ajuste final
+      }, total);
+
+      // Recalcular em resize/rotação
+      window.addEventListener('resize', resizeBrand);
+      // Pequeno debounce para fontes que ajustam depois do paint
+      setTimeout(resizeBrand, 100);
+      setTimeout(resizeBrand, 300);
+    }
+
+    // Comportamento original do "executar_protocolo.sh"
+    (function(){
+      const $exec = document.getElementById('executar');
+      if(!$exec) return;
+      $exec.addEventListener('click', function(){
+        setTimeout(function(){
+          if (document.visibilityState === 'visible') {
+            alert('protocolo executado localmente. defina a rota "/" quando a home existir.');
+          }
+        }, 600);
+      });
+    })();
+  </script>
+</body>
+</html>
